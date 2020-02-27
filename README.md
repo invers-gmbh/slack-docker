@@ -9,21 +9,6 @@ A Slack integration to notify [Docker events](https://docs.docker.com/engine/ref
 
 Setup [an Incoming WebHook](https://my.slack.com/services/new/incoming-webhook) on your Slack workspace and get the WebHook URL.
 
-Install slack-docker by brew tap or from the [releases](https://github.com/int128/slack-docker/releases).
-
-```sh
-brew tap int128/slack-docker
-brew install slack-docker
-```
-
-Run the command with the WebHook URL.
-
-```sh
-slack-docker --webhook=https://hooks.slack.com/services/...
-```
-
-You can run on Docker or Docker Compose as well.
-
 ```
 # Docker
 docker run -d -e webhook=https://hooks.slack.com/services/... -h "$(hostname)" -v /var/run/docker.sock:/var/run/docker.sock inverscom/slack-docker
@@ -32,7 +17,6 @@ docker run -d -e webhook=https://hooks.slack.com/services/... -h "$(hostname)" -
 curl -O https://raw.githubusercontent.com/int128/slack-docker/master/docker-compose.yml
 docker-compose up -d
 ```
-
 
 ## Configuration
 
