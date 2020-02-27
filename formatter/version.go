@@ -12,13 +12,13 @@ import (
 func Version(v types.Version, filter EventFilter) *slack.Message {
 	var textArray []string
 	if filter.TypeRegexp != nil {
-		textArray = append(textArray, fmt.Sprintf("TypeRegexp: %s", filter.TypeRegexp.String()))
+		textArray = append(textArray, fmt.Sprintf("TypeRegexp: `%s`", filter.TypeRegexp.String()))
 	}
 	if filter.ImageRegexp != nil {
-		textArray = append(textArray, fmt.Sprintf("ImageRegexp: %s", filter.ImageRegexp.String()))
+		textArray = append(textArray, fmt.Sprintf("ImageRegexp: `%s`", filter.ImageRegexp.String()))
 	}
 	if filter.ContainerNameRegexp != nil {
-		textArray = append(textArray, fmt.Sprintf("ContainerNameRegexp: %s", filter.ContainerNameRegexp.String()))
+		textArray = append(textArray, fmt.Sprintf("ContainerNameRegexp: `%s`", filter.ContainerNameRegexp.String()))
 	}
 	text := strings.Join(textArray, ", ")
 	message := &slack.Message{
