@@ -26,7 +26,7 @@ You can run on Docker or Docker Compose as well.
 
 ```
 # Docker
-docker run -d -e webhook=https://hooks.slack.com/services/... -h "$(hostname)" -v /var/run/docker.sock:/var/run/docker.sock int128/slack-docker
+docker run -d -e webhook=https://hooks.slack.com/services/... -h "$(hostname)" -v /var/run/docker.sock:/var/run/docker.sock inverscom/slack-docker
 
 # Docker Compose
 curl -O https://raw.githubusercontent.com/int128/slack-docker/master/docker-compose.yml
@@ -42,6 +42,9 @@ It supports the following options and environment variables:
 Application Options:
       --webhook=      Slack Incoming WebHook URL [$webhook]
       --image-regexp= Filter events by image name (default to all) [$image_regexp]
+      --container-regexp= Filter events by container name (default to all) [$container_regexp]
+      --action-regexp= Filter events by action (default to all) [$action_regexp]
+      --type-regexp= Filter events by type (default to all) [$type_regexp]
 
 Help Options:
   -h, --help          Show this help message
