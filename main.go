@@ -19,6 +19,7 @@ type options struct {
 	TypeRegexp          string `long:"type-regexp" env:"type_regexp" description:"Filter events by type (default to all)"`
 	ContainerNameRegexp string `long:"container-name-regexp" env:"container_name_regexp" description:"Filter events by container name (default to all)"`
 	ActionRegexp        string `long:"action-regexp" env:"action_regexp" description:"Filter events by action (default to all)"`
+	TitleLink           string `long:"title-link" env:"title_link" description:"Link that should be used in titles of slack attachments"`
 }
 
 func (o *options) Run(ctx context.Context) error {
@@ -26,70 +27,70 @@ func (o *options) Run(ctx context.Context) error {
 	if o.DockerImageRegexp != "" {
 		r, err := regexp.Compile(o.DockerImageRegexp)
 		if err != nil {
-			return fmt.Errorf("Invalid image-regexp: %s", err)
+			return fmt.Errorf("invalid image-regexp: %s", err)
 		}
 		eventFilter.ImageRegexp = r
 	}
 	if o.TypeRegexp != "" {
 		r, err := regexp.Compile(o.TypeRegexp)
 		if err != nil {
-			return fmt.Errorf("Invalid type-regexp: %s", err)
+			return fmt.Errorf("invalid type-regexp: %s", err)
 		}
 		eventFilter.TypeRegexp = r
 	}
 	if o.ContainerNameRegexp != "" {
 		r, err := regexp.Compile(o.ContainerNameRegexp)
 		if err != nil {
-			return fmt.Errorf("Invalid container-regexp: %s", err)
+			return fmt.Errorf("invalid container-regexp: %s", err)
 		}
 		eventFilter.ContainerNameRegexp = r
 	}
 	if o.DockerImageRegexp != "" {
 		r, err := regexp.Compile(o.DockerImageRegexp)
 		if err != nil {
-			return fmt.Errorf("Invalid image-regexp: %s", err)
+			return fmt.Errorf("invalid image-regexp: %s", err)
 		}
 		eventFilter.ImageRegexp = r
 	}
 	if o.ActionRegexp != "" {
 		r, err := regexp.Compile(o.ActionRegexp)
 		if err != nil {
-			return fmt.Errorf("Invalid action-regexp: %s", err)
+			return fmt.Errorf("invalid action-regexp: %s", err)
 		}
 		eventFilter.ActionRegexp = r
 	}
 	docker, err := client.NewEnvClient()
 	if err != nil {
-		return fmt.Errorf("Could not create a Docker client: %s", err)
+		return fmt.Errorf("could not create a Docker client: %s", err)
 	}
-	if err := o.showVersion(ctx, docker, eventFilter); err != nil {
+	if err := o.showStartup(ctx, docker, eventFilter, o.TitleLink); err != nil {
 		return err
 	}
-	if err := o.showEvents(ctx, docker, eventFilter); err != nil {
+	if err := o.showEvents(ctx, docker, eventFilter, o.TitleLink); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *options) showVersion(ctx context.Context, docker *client.Client, filter formatter.EventFilter) error {
+func (o *options) showStartup(ctx context.Context, docker *client.Client, filter formatter.EventFilter, titleLink string) error {
 	v, err := docker.ServerVersion(ctx)
 	if err != nil {
-		return fmt.Errorf("Could not get version from the Docker server: %s", err)
+		return fmt.Errorf("could not get version from the Docker server: %s", err)
 	}
 	log.Printf("Connected to Docker server: %+v", v)
-	if err := slack.Send(o.Webhook, formatter.Version(v, filter)); err != nil {
-		return fmt.Errorf("Could not send a message to Slack: %s", err)
+	if err := slack.Send(o.Webhook, formatter.Startup(v, filter, titleLink)); err != nil {
+		return fmt.Errorf("could not send a message to Slack: %s", err)
 	}
 	return nil
 }
 
-func (o *options) showEvents(ctx context.Context, docker *client.Client, filter formatter.EventFilter) error {
+func (o *options) showEvents(ctx context.Context, docker *client.Client, filter formatter.EventFilter, titleLink string) error {
 	msgCh, errCh := docker.Events(ctx, types.EventsOptions{})
 	for {
 		select {
 		case msg := <-msgCh:
 			log.Printf("Event %+v", msg)
-			m := formatter.Event(msg, filter)
+			m := formatter.Event(msg, filter, titleLink)
 			if m != nil {
 				if err := slack.Send(o.Webhook, m); err != nil {
 					log.Printf("Error while sending a message to Slack: %s", err)

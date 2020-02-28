@@ -42,24 +42,24 @@ func (filter *EventFilter) Match(e events.Message) bool {
 
 // Event returns a message for the event.
 // It returns a message only for some events and may return nil.
-func Event(e events.Message, filter EventFilter) *slack.Message {
+func Event(e events.Message, filter EventFilter, titleLink string) *slack.Message {
 	if !filter.Match(e) {
 		return nil
 	}
 	switch e.Type {
 	case "container":
-		return containerEvent(e)
+		return containerEvent(e, titleLink)
 	case "image":
-		return imageEvent(e)
+		return imageEvent(e, titleLink)
 	case "volume":
-		return volumeEvent(e)
+		return volumeEvent(e, titleLink)
 	case "network":
-		return networkEvent(e)
+		return networkEvent(e, titleLink)
 	}
 	return nil
 }
 
-func containerEvent(e events.Message) *slack.Message {
+func containerEvent(e events.Message, titleLink string) *slack.Message {
 	switch {
 	case e.Action == "start":
 		return &slack.Message{
@@ -68,6 +68,7 @@ func containerEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":package: Started %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Container `%s` has been started with the image `%s`.", e.Actor.Attributes["name"], e.Actor.Attributes["image"]),
 					Footer:    e.Actor.ID,
 					Color:     "good",
@@ -83,6 +84,7 @@ func containerEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":package: Kill %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Container `%s` got kill command", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "warning",
@@ -105,6 +107,7 @@ func containerEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":package: Stopped %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Container `%s` has been terminated with exit code `%s`.", e.Actor.Attributes["name"], e.Actor.Attributes["exitCode"]),
 					Footer:    e.Actor.ID,
 					Color:     color,
@@ -120,6 +123,7 @@ func containerEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":package: Removed %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Container `%s` has been removed.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "warning",
@@ -132,7 +136,7 @@ func containerEvent(e events.Message) *slack.Message {
 	return nil
 }
 
-func imageEvent(e events.Message) *slack.Message {
+func imageEvent(e events.Message, titleLink string) *slack.Message {
 	switch {
 	case e.Action == "tag":
 		return &slack.Message{
@@ -141,6 +145,7 @@ func imageEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":label: Tagged %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Image `%s` has been tagged.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "good",
@@ -156,6 +161,7 @@ func imageEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":label: Deleted %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Image `%s` has been deleted.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "good",
@@ -168,7 +174,7 @@ func imageEvent(e events.Message) *slack.Message {
 	return nil
 }
 
-func volumeEvent(e events.Message) *slack.Message {
+func volumeEvent(e events.Message, titleLink string) *slack.Message {
 	switch {
 	case e.Action == "create":
 		return &slack.Message{
@@ -177,6 +183,7 @@ func volumeEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":oil_drum: Started %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Volume `%s` has been created.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "good",
@@ -192,6 +199,7 @@ func volumeEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":oil_drum: Removed %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Volume `%s` has been removed.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "warning",
@@ -204,7 +212,7 @@ func volumeEvent(e events.Message) *slack.Message {
 	return nil
 }
 
-func networkEvent(e events.Message) *slack.Message {
+func networkEvent(e events.Message, titleLink string) *slack.Message {
 	switch {
 	case e.Action == "create":
 		return &slack.Message{
@@ -213,6 +221,7 @@ func networkEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":link: Started %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Network `%s` has been created.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "good",
@@ -228,6 +237,7 @@ func networkEvent(e events.Message) *slack.Message {
 			Attachments: []slack.Attachment{
 				{
 					Title:     fmt.Sprintf(":link: Removed %s", e.Actor.Attributes["name"]),
+					TitleLink: titleLink,
 					Text:      fmt.Sprintf("Network `%s` has been removed.", e.Actor.Attributes["name"]),
 					Footer:    e.Actor.ID,
 					Color:     "warning",

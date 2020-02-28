@@ -8,8 +8,8 @@ import (
 	"time"
 )
 
-// Version returns a message for the Docker version.
-func Version(v types.Version, filter EventFilter) *slack.Message {
+// Startup returns a message for the Docker version.
+func Startup(v types.Version, filter EventFilter, titleLink string) *slack.Message {
 	var textArray []string
 	if filter.TypeRegexp != nil {
 		textArray = append(textArray, fmt.Sprintf("TypeRegexp: `%s`", filter.TypeRegexp.String()))
@@ -25,8 +25,9 @@ func Version(v types.Version, filter EventFilter) *slack.Message {
 		Username:  username,
 		IconEmoji: iconEmoji,
 		Attachments: []slack.Attachment{
-			slack.Attachment{
+			{
 				Title:     "Started Slack-Docker",
+				TitleLink: titleLink,
 				Text:      text,
 				Footer:    fmt.Sprintf("Docker version %s (%s)", v.Version, v.KernelVersion),
 				Color:     "#00a29a",
