@@ -38,11 +38,31 @@ Help Options:
   -h, --help          Show this help message
 ```
 
+## Examples
 
-### Filter events by image name
+### Only send messages for containers with specific image
 
 ```sh
-webhook=https://hooks.slack.com/services/... image_regexp='^alpine$' ./slack-docker
+docker run -d \
+      -e webhook=https://hooks.slack.com/services/... \
+      -e image_regexp='^alpine$' \
+      -e type_regexp=container \
+      -h "$(hostname)" \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      inverscom/slack-docker
+```
+
+### Only send messages for start and die events for containers with specific container name
+
+```sh
+docker run -d \
+      -e webhook=https://hooks.slack.com/services/... \
+      -e container_regexp=webserver \
+      -e type_regexp=container \
+      -e action_regexp=start|die \
+      -h "$(hostname)" \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      inverscom/slack-docker
 ```
 
 
