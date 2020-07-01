@@ -11,7 +11,11 @@ Setup [an Incoming WebHook](https://my.slack.com/services/new/incoming-webhook) 
 
 ```
 # Docker
-docker run -d -e webhook=https://hooks.slack.com/services/... -h "$(hostname)" -v /var/run/docker.sock:/var/run/docker.sock inverscom/slack-docker
+docker run -d \
+      -e webhook=https://hooks.slack.com/services/... \
+      -h "$(hostname)" \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      inverscom/slack-docker
 
 # Docker Compose
 curl -O https://raw.githubusercontent.com/int128/slack-docker/master/docker-compose.yml
@@ -23,12 +27,12 @@ docker-compose up -d
 It supports the following options and environment variables:
 
 ```
-Application Options:
-      --webhook=      Slack Incoming WebHook URL [$webhook]
-      --image-regexp= Filter events by image name (default to all) [$image_regexp]
-      --container-regexp= Filter events by container name (default to all) [$container_regexp]
-      --action-regexp= Filter events by action (default to all) [$action_regexp]
-      --type-regexp= Filter events by type (default to all) [$type_regexp]
+Application Options [env-variable]:
+      --webhook [$webhook]                      = Slack Incoming WebHook URL
+      --image-regexp [$image_regexp]            = Filter events by image name (default to all) 
+      --container-regexp [$container_regexp]    = Filter events by container name (default to all) 
+      --action-regexp [$action_regexp]          = Filter events by action (default to all) - possible values: https://docs.docker.com/engine/reference/commandline/events/
+      --type-regexp [$type_regexp]              = Filter events by type (default to all) - possible values: https://docs.docker.com/engine/reference/commandline/events/
 
 Help Options:
   -h, --help          Show this help message
