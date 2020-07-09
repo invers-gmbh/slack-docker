@@ -33,6 +33,7 @@ Application Options [env-variable]:
       --container-regexp [$container_regexp]    = Filter events by container name (default to all) 
       --action-regexp [$action_regexp]          = Filter events by action (default to all) - possible values: https://docs.docker.com/engine/reference/commandline/events/
       --type-regexp [$type_regexp]              = Filter events by type (default to all) - possible values: https://docs.docker.com/engine/reference/commandline/events/
+      --title-link [$title_link]                = Link for the title in slack (e.g. link to a protainer on this docker host)
 
 Help Options:
   -h, --help          Show this help message
@@ -47,6 +48,7 @@ docker run -d \
       -e webhook=https://hooks.slack.com/services/... \
       -e image_regexp='^alpine$' \
       -e type_regexp=container \
+      -e title_link=http://xxx \
       -h "$(hostname)" \
       -v /var/run/docker.sock:/var/run/docker.sock \
       inverscom/slack-docker
@@ -60,6 +62,7 @@ docker run -d \
       -e container_regexp=webserver \
       -e type_regexp=container \
       -e action_regexp=start|die \
+      -e title_link=http://xxx \
       -h "$(hostname)" \
       -v /var/run/docker.sock:/var/run/docker.sock \
       inverscom/slack-docker
