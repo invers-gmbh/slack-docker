@@ -30,7 +30,7 @@ It supports the following options and environment variables:
 Application Options [env-variable]:
       --webhook [$webhook]                      = Slack Incoming WebHook URL
       --image-regexp [$image_regexp]            = Filter events by image name (default to all) 
-      --container-regexp [$container_regexp]    = Filter events by container name (default to all) 
+      --container-name-regexp [$container_name_regexp]    = Filter events by container name (default to all) 
       --action-regexp [$action_regexp]          = Filter events by action (default to all) - possible values: https://docs.docker.com/engine/reference/commandline/events/
       --type-regexp [$type_regexp]              = Filter events by type (default to all) - possible values: https://docs.docker.com/engine/reference/commandline/events/
       --title-link [$title_link]                = Link for the title in slack (e.g. link to a protainer on this docker host)
@@ -59,7 +59,7 @@ docker run -d \
 ```sh
 docker run -d \
       -e webhook=https://hooks.slack.com/services/... \
-      -e container_regexp=webserver \
+      -e container_name_regexp=webserver \
       -e type_regexp=container \
       -e action_regexp=start|die \
       -e title_link=http://xxx \
